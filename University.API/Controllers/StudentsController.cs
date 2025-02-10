@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Policy;
 using University.Models.Entities;
 using University.Repository.Data;
 
@@ -20,6 +19,11 @@ namespace University.API.Controllers
         public async Task<IActionResult> GetAll() 
         {
             var students = await _context.Students.ToListAsync();
+
+            if (students.Count() == 0)
+            {
+                return NotFound("No students found");
+            }
             return Ok(students);
 
         }
@@ -28,6 +32,11 @@ namespace University.API.Controllers
         public async Task<IActionResult> GetSingleStudent([FromRoute]int id)
         {
             var result=await  _context.Students.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(result == null)
+            {
+                return NotFound($"No student found with id {id}");
+            }
             return Ok(result);
         }
 
@@ -49,9 +58,14 @@ namespace University.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudent(int id)
+        public async Task<IActionResult> DeleteStudent([FromRoute] int id)
         {
             var studentToDelete=_context.Students.FirstOrDefault(x=>x.Id == id);
+
+            if(studentToDelete == null)
+            {
+                return BadRequest($"Unable to delete. No student found with id {id}"); 
+            }
 
             _context.Students.Remove(studentToDelete);
             await _context.SaveChangesAsync();

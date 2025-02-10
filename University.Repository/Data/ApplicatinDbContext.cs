@@ -7,11 +7,11 @@ namespace University.Repository.Data
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
+
         }
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
-        //1:18:24
 
 
     }
